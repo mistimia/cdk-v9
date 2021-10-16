@@ -2,10 +2,9 @@
   "name": "v9",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ishitasaxena78/v9.git"
+    "url": "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdk-library-v7"
   },
   "scripts": {
-    "clobber": "npx projen clobber",
     "compile": "npx projen compile",
     "test:compile": "npx projen test:compile",
     "test": "npx projen test",
@@ -15,8 +14,6 @@
     "bump": "npx projen bump",
     "unbump": "npx projen unbump",
     "publish:github": "npx projen publish:github",
-    "upgrade": "npx projen upgrade",
-    "upgrade-projen": "npx projen upgrade-projen",
     "default": "npx projen default",
     "watch": "npx projen watch",
     "package": "npx projen package",
@@ -25,6 +22,8 @@
     "publish:npm": "npx projen publish:npm",
     "docgen": "npx projen docgen",
     "release": "npx projen release",
+    "upgrade": "npx projen upgrade",
+    "upgrade-projen": "npx projen upgrade-projen",
     "projen": "npx projen"
   },
   "author": {
@@ -33,7 +32,7 @@
     "organization": false
   },
   "devDependencies": {
-    "@aws-cdk/assert": "^1.95.2",
+    "@aws-cdk/assert": "^1.127.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^14.17.0",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -56,7 +55,23 @@
     "typescript": "^4.4.4"
   },
   "peerDependencies": {
+    "@aws-cdk/aws-codebuild": "^1.127.0",
+    "@aws-cdk/aws-codecommit": "^1.127.0",
+    "@aws-cdk/aws-codepipeline": "^1.127.0",
+    "@aws-cdk/aws-codepipeline-actions": "^1.127.0",
+    "@aws-cdk/aws-ec2": "^1.127.0",
+    "@aws-cdk/aws-iam": "^1.127.0",
+    "@aws-cdk/core": "^1.127.0",
     "constructs": "^3.2.27"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-codebuild": "^1.127.0",
+    "@aws-cdk/aws-codecommit": "^1.127.0",
+    "@aws-cdk/aws-codepipeline": "^1.127.0",
+    "@aws-cdk/aws-codepipeline-actions": "^1.127.0",
+    "@aws-cdk/aws-ec2": "^1.127.0",
+    "@aws-cdk/aws-iam": "^1.127.0",
+    "@aws-cdk/core": "^1.127.0"
   },
   "bundledDependencies": [],
   "keywords": [
@@ -100,7 +115,7 @@
     "preset": "ts-jest",
     "globals": {
       "ts-jest": {
-        "tsconfig": "tsconfig.jest.json"
+        "tsconfig": "tsconfig.dev.json"
       }
     }
   },

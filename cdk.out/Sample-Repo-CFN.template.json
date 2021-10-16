@@ -1,0 +1,1832 @@
+{
+  "Resources": {
+    "codebuildserviceroleDBFDD346": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "sns.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/codebuild-service-role/Resource"
+      }
+    },
+    "codebuildserviceroleDefaultPolicyBF8B19A4": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "*",
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "codebuildserviceroleDefaultPolicyBF8B19A4",
+        "Roles": [
+          {
+            "Ref": "codebuildserviceroleDBFDD346"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/codebuild-service-role/DefaultPolicy/Resource"
+      }
+    },
+    "myVPCBAB8BA3C": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/Resource"
+      }
+    },
+    "myVPCPublicSubnet1SubnetAE25AD2F": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/19",
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "AvailabilityZone": "us-west-2a",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          },
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet1/Subnet"
+      }
+    },
+    "myVPCPublicSubnet1RouteTableA5A04882": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet1/RouteTable"
+      }
+    },
+    "myVPCPublicSubnet1RouteTableAssociationF7F17877": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPublicSubnet1RouteTableA5A04882"
+        },
+        "SubnetId": {
+          "Ref": "myVPCPublicSubnet1SubnetAE25AD2F"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet1/RouteTableAssociation"
+      }
+    },
+    "myVPCPublicSubnet1DefaultRoute709F7D00": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPublicSubnet1RouteTableA5A04882"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "myVPCIGW2C2F3E71"
+        }
+      },
+      "DependsOn": [
+        "myVPCVPCGWA45930B8"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet1/DefaultRoute"
+      }
+    },
+    "myVPCPublicSubnet1EIP9F52A4C6": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet1/EIP"
+      }
+    },
+    "myVPCPublicSubnet1NATGatewayF622763A": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "myVPCPublicSubnet1SubnetAE25AD2F"
+        },
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "myVPCPublicSubnet1EIP9F52A4C6",
+            "AllocationId"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet1/NATGateway"
+      }
+    },
+    "myVPCPublicSubnet2Subnet79CA078D": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.32.0/19",
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "AvailabilityZone": "us-west-2b",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          },
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet2/Subnet"
+      }
+    },
+    "myVPCPublicSubnet2RouteTable8FEA4CB4": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet2/RouteTable"
+      }
+    },
+    "myVPCPublicSubnet2RouteTableAssociation7BA33D16": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPublicSubnet2RouteTable8FEA4CB4"
+        },
+        "SubnetId": {
+          "Ref": "myVPCPublicSubnet2Subnet79CA078D"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet2/RouteTableAssociation"
+      }
+    },
+    "myVPCPublicSubnet2DefaultRouteD43A32EE": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPublicSubnet2RouteTable8FEA4CB4"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "myVPCIGW2C2F3E71"
+        }
+      },
+      "DependsOn": [
+        "myVPCVPCGWA45930B8"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet2/DefaultRoute"
+      }
+    },
+    "myVPCPublicSubnet2EIPDAA3497E": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet2/EIP"
+      }
+    },
+    "myVPCPublicSubnet2NATGateway226FBF89": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "myVPCPublicSubnet2Subnet79CA078D"
+        },
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "myVPCPublicSubnet2EIPDAA3497E",
+            "AllocationId"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet2/NATGateway"
+      }
+    },
+    "myVPCPublicSubnet3SubnetA972749A": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.64.0/19",
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "AvailabilityZone": "us-west-2c",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          },
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet3"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet3/Subnet"
+      }
+    },
+    "myVPCPublicSubnet3RouteTable59E579D6": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet3"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet3/RouteTable"
+      }
+    },
+    "myVPCPublicSubnet3RouteTableAssociation9159A926": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPublicSubnet3RouteTable59E579D6"
+        },
+        "SubnetId": {
+          "Ref": "myVPCPublicSubnet3SubnetA972749A"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet3/RouteTableAssociation"
+      }
+    },
+    "myVPCPublicSubnet3DefaultRouteE8D9CBD6": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPublicSubnet3RouteTable59E579D6"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "myVPCIGW2C2F3E71"
+        }
+      },
+      "DependsOn": [
+        "myVPCVPCGWA45930B8"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet3/DefaultRoute"
+      }
+    },
+    "myVPCPublicSubnet3EIP50277711": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet3"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet3/EIP"
+      }
+    },
+    "myVPCPublicSubnet3NATGatewayEC7068FC": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "myVPCPublicSubnet3SubnetA972749A"
+        },
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "myVPCPublicSubnet3EIP50277711",
+            "AllocationId"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PublicSubnet3"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PublicSubnet3/NATGateway"
+      }
+    },
+    "myVPCPrivateSubnet1Subnet7AD57A37": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.96.0/19",
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "AvailabilityZone": "us-west-2a",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private"
+          },
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PrivateSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet1/Subnet"
+      }
+    },
+    "myVPCPrivateSubnet1RouteTable213CC3EE": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PrivateSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet1/RouteTable"
+      }
+    },
+    "myVPCPrivateSubnet1RouteTableAssociation10122EE9": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPrivateSubnet1RouteTable213CC3EE"
+        },
+        "SubnetId": {
+          "Ref": "myVPCPrivateSubnet1Subnet7AD57A37"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet1/RouteTableAssociation"
+      }
+    },
+    "myVPCPrivateSubnet1DefaultRouteEB991295": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPrivateSubnet1RouteTable213CC3EE"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "myVPCPublicSubnet1NATGatewayF622763A"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet1/DefaultRoute"
+      }
+    },
+    "myVPCPrivateSubnet2Subnet33138960": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.128.0/19",
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "AvailabilityZone": "us-west-2b",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private"
+          },
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PrivateSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet2/Subnet"
+      }
+    },
+    "myVPCPrivateSubnet2RouteTableB16CB36E": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PrivateSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet2/RouteTable"
+      }
+    },
+    "myVPCPrivateSubnet2RouteTableAssociation72A8FAA3": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPrivateSubnet2RouteTableB16CB36E"
+        },
+        "SubnetId": {
+          "Ref": "myVPCPrivateSubnet2Subnet33138960"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet2/RouteTableAssociation"
+      }
+    },
+    "myVPCPrivateSubnet2DefaultRoute6F945BD5": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPrivateSubnet2RouteTableB16CB36E"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "myVPCPublicSubnet2NATGateway226FBF89"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet2/DefaultRoute"
+      }
+    },
+    "myVPCPrivateSubnet3SubnetB7E54C1A": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.160.0/19",
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "AvailabilityZone": "us-west-2c",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private"
+          },
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PrivateSubnet3"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet3/Subnet"
+      }
+    },
+    "myVPCPrivateSubnet3RouteTableAFA1E9B7": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC/PrivateSubnet3"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet3/RouteTable"
+      }
+    },
+    "myVPCPrivateSubnet3RouteTableAssociation1E1BA281": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPrivateSubnet3RouteTableAFA1E9B7"
+        },
+        "SubnetId": {
+          "Ref": "myVPCPrivateSubnet3SubnetB7E54C1A"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet3/RouteTableAssociation"
+      }
+    },
+    "myVPCPrivateSubnet3DefaultRouteE6B14CFD": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "myVPCPrivateSubnet3RouteTableAFA1E9B7"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "myVPCPublicSubnet3NATGatewayEC7068FC"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/PrivateSubnet3/DefaultRoute"
+      }
+    },
+    "myVPCIGW2C2F3E71": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Sample-Repo-CFN/my-VPC"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/IGW"
+      }
+    },
+    "myVPCVPCGWA45930B8": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        },
+        "InternetGatewayId": {
+          "Ref": "myVPCIGW2C2F3E71"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/my-VPC/VPCGW"
+      }
+    },
+    "SGS78B62359": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Sample-Repo-CFN/SGS",
+        "GroupName": "Codebuild-security-group",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "from 0.0.0.0/0:443",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "from 0.0.0.0/0:80",
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "ToPort": 80
+          }
+        ],
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/SGS/Resource"
+      }
+    },
+    "MyRepository4C4BD5FC": {
+      "Type": "AWS::CodeCommit::Repository",
+      "Properties": {
+        "RepositoryName": "Sample-Repo-CodeCommit"
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/MyRepository/Resource"
+      }
+    },
+    "MyRepositoryCommitToMasterD2B6541B": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "aws.codecommit"
+          ],
+          "resources": [
+            {
+              "Fn::GetAtt": [
+                "MyRepository4C4BD5FC",
+                "Arn"
+              ]
+            }
+          ],
+          "detail-type": [
+            "CodeCommit Repository State Change"
+          ],
+          "detail": {
+            "event": [
+              "referenceCreated",
+              "referenceUpdated"
+            ],
+            "referenceName": [
+              "master"
+            ]
+          }
+        },
+        "State": "ENABLED"
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/MyRepository/CommitToMaster/Resource"
+      }
+    },
+    "MyRepositorySampleRepoCFNSampleRepoCodePipeline433224ECEventRuleB74AF057": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "aws.codecommit"
+          ],
+          "resources": [
+            {
+              "Fn::GetAtt": [
+                "MyRepository4C4BD5FC",
+                "Arn"
+              ]
+            }
+          ],
+          "detail-type": [
+            "CodeCommit Repository State Change"
+          ],
+          "detail": {
+            "event": [
+              "referenceCreated",
+              "referenceUpdated"
+            ],
+            "referenceName": [
+              "master"
+            ]
+          }
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":codepipeline:us-west-2:024845724544:",
+                  {
+                    "Ref": "SampleRepoCodePipelineC5C6DDEA"
+                  }
+                ]
+              ]
+            },
+            "Id": "Target0",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "SampleRepoCodePipelineEventsRoleE1F60783",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/MyRepository/SampleRepoCFNSampleRepoCodePipeline433224ECEventRule/Resource"
+      }
+    },
+    "SampleRepoCodebuildRoleFD6E0927": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codebuild.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-Codebuild/Role/Resource"
+      }
+    },
+    "SampleRepoCodebuildRoleDefaultPolicy9D638E3A": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "codecommit:GitPull",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "MyRepository4C4BD5FC",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "ec2:CreateNetworkInterfacePermission",
+              "Condition": {
+                "StringEquals": {
+                  "ec2:Subnet": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":ec2:",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          ":",
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          ":subnet/",
+                          {
+                            "Ref": "myVPCPrivateSubnet1Subnet7AD57A37"
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":ec2:",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          ":",
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          ":subnet/",
+                          {
+                            "Ref": "myVPCPrivateSubnet2Subnet33138960"
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":ec2:",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          ":",
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          ":subnet/",
+                          {
+                            "Ref": "myVPCPrivateSubnet3SubnetB7E54C1A"
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  "ec2:AuthorizedService": "codebuild.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ec2:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":network-interface/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":logs:us-west-2:024845724544:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "SampleRepoCodebuild03200E2C"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":logs:us-west-2:024845724544:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "SampleRepoCodebuild03200E2C"
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":codebuild:us-west-2:024845724544:report-group/",
+                    {
+                      "Ref": "SampleRepoCodebuild03200E2C"
+                    },
+                    "-*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "SampleRepoCodePipelineArtifactsBucket026A8665",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "SampleRepoCodePipelineArtifactsBucket026A8665",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "SampleRepoCodePipelineArtifactsBucketEncryptionKey0EF69A44",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "SampleRepoCodePipelineArtifactsBucketEncryptionKey0EF69A44",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "SampleRepoCodebuildRoleDefaultPolicy9D638E3A",
+        "Roles": [
+          {
+            "Ref": "SampleRepoCodebuildRoleFD6E0927"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-Codebuild/Role/DefaultPolicy/Resource"
+      }
+    },
+    "SampleRepoCodebuildSecurityGroup25422068": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Automatic generated security group for CodeBuild SampleRepoCFNSampleRepoCodebuildF2F15509",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "VpcId": {
+          "Ref": "myVPCBAB8BA3C"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-Codebuild/SecurityGroup/Resource"
+      }
+    },
+    "SampleRepoCodebuild03200E2C": {
+      "Type": "AWS::CodeBuild::Project",
+      "Properties": {
+        "Artifacts": {
+          "Type": "NO_ARTIFACTS"
+        },
+        "Environment": {
+          "ComputeType": "BUILD_GENERAL1_MEDIUM",
+          "Image": "aws/codebuild/standard:1.0",
+          "ImagePullCredentialsType": "CODEBUILD",
+          "PrivilegedMode": true,
+          "Type": "LINUX_CONTAINER"
+        },
+        "ServiceRole": {
+          "Fn::GetAtt": [
+            "SampleRepoCodebuildRoleFD6E0927",
+            "Arn"
+          ]
+        },
+        "Source": {
+          "BuildSpec": "project/buildspec.yml",
+          "Location": {
+            "Fn::GetAtt": [
+              "MyRepository4C4BD5FC",
+              "CloneUrlHttp"
+            ]
+          },
+          "Type": "CODECOMMIT"
+        },
+        "EncryptionKey": {
+          "Fn::GetAtt": [
+            "SampleRepoCodePipelineArtifactsBucketEncryptionKey0EF69A44",
+            "Arn"
+          ]
+        },
+        "VpcConfig": {
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "SampleRepoCodebuildSecurityGroup25422068",
+                "GroupId"
+              ]
+            }
+          ],
+          "Subnets": [
+            {
+              "Ref": "myVPCPrivateSubnet1Subnet7AD57A37"
+            },
+            {
+              "Ref": "myVPCPrivateSubnet2Subnet33138960"
+            },
+            {
+              "Ref": "myVPCPrivateSubnet3SubnetB7E54C1A"
+            }
+          ],
+          "VpcId": {
+            "Ref": "myVPCBAB8BA3C"
+          }
+        }
+      },
+      "DependsOn": [
+        "SampleRepoCodebuildPolicyDocument5E46D7F0"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-Codebuild/Resource"
+      }
+    },
+    "SampleRepoCodebuildPolicyDocument5E46D7F0": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ec2:CreateNetworkInterface",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DeleteNetworkInterface",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeDhcpOptions",
+                "ec2:DescribeVpcs"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "SampleRepoCodebuildPolicyDocument5E46D7F0",
+        "Roles": [
+          {
+            "Ref": "SampleRepoCodebuildRoleFD6E0927"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-Codebuild/PolicyDocument/Resource"
+      }
+    },
+    "SampleRepoCodePipelineArtifactsBucketEncryptionKey0EF69A44": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion",
+                "kms:GenerateDataKey",
+                "kms:TagResource",
+                "kms:UntagResource"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::024845724544:root"
+                    ]
+                  ]
+                }
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "SampleRepoCodePipelineRole6980DB1B",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "SampleRepoCodePipelineSourceCodeCommitCodePipelineActionRole96429E3E",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "SampleRepoCodebuildRoleFD6E0927",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "SampleRepoCodebuildRoleFD6E0927",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/ArtifactsBucketEncryptionKey/Resource"
+      }
+    },
+    "SampleRepoCodePipelineArtifactsBucketEncryptionKeyAliasBDF96939": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/codepipeline-samplerepocfnsamplerepocodepipeline433224ec",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "SampleRepoCodePipelineArtifactsBucketEncryptionKey0EF69A44",
+            "Arn"
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/ArtifactsBucketEncryptionKeyAlias/Resource"
+      }
+    },
+    "SampleRepoCodePipelineArtifactsBucket026A8665": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "SampleRepoCodePipelineArtifactsBucketEncryptionKey0EF69A44",
+                    "Arn"
+                  ]
+                },
+                "SSEAlgorithm": "aws:kms"
+              }
+            }
+          ]
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/ArtifactsBucket/Resource"
+      }
+    },
+    "SampleRepoCodePipelineRole6980DB1B": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codepipeline.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/Role/Resource"
+      }
+    },
+    "SampleRepoCodePipelineRoleDefaultPolicy642AC930": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "SampleRepoCodePipelineArtifactsBucket026A8665",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "SampleRepoCodePipelineArtifactsBucket026A8665",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "SampleRepoCodePipelineArtifactsBucketEncryptionKey0EF69A44",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "SampleRepoCodePipelineSourceCodeCommitCodePipelineActionRole96429E3E",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "SampleRepoCodePipelineBuildCodeBuildCodePipelineActionRoleEDB8B57B",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "SampleRepoCodePipelineRoleDefaultPolicy642AC930",
+        "Roles": [
+          {
+            "Ref": "SampleRepoCodePipelineRole6980DB1B"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/Role/DefaultPolicy/Resource"
+      }
+    },
+    "SampleRepoCodePipelineC5C6DDEA": {
+      "Type": "AWS::CodePipeline::Pipeline",
+      "Properties": {
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "SampleRepoCodePipelineRole6980DB1B",
+            "Arn"
+          ]
+        },
+        "Stages": [
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Source",
+                  "Owner": "AWS",
+                  "Provider": "CodeCommit",
+                  "Version": "1"
+                },
+                "Configuration": {
+                  "RepositoryName": {
+                    "Fn::GetAtt": [
+                      "MyRepository4C4BD5FC",
+                      "Name"
+                    ]
+                  },
+                  "BranchName": "master",
+                  "PollForSourceChanges": false
+                },
+                "Name": "CodeCommit",
+                "OutputArtifacts": [
+                  {
+                    "Name": "Artifact_Source_CodeCommit"
+                  }
+                ],
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "SampleRepoCodePipelineSourceCodeCommitCodePipelineActionRole96429E3E",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              }
+            ],
+            "Name": "Source"
+          },
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Provider": "CodeBuild",
+                  "Version": "1"
+                },
+                "Configuration": {
+                  "ProjectName": {
+                    "Ref": "SampleRepoCodebuild03200E2C"
+                  }
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "Artifact_Source_CodeCommit"
+                  }
+                ],
+                "Name": "CodeBuild",
+                "OutputArtifacts": [
+                  {
+                    "Name": "Artifact_Build_CodeBuild"
+                  }
+                ],
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "SampleRepoCodePipelineBuildCodeBuildCodePipelineActionRoleEDB8B57B",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              }
+            ],
+            "Name": "Build"
+          }
+        ],
+        "ArtifactStore": {
+          "EncryptionKey": {
+            "Id": {
+              "Fn::GetAtt": [
+                "SampleRepoCodePipelineArtifactsBucketEncryptionKey0EF69A44",
+                "Arn"
+              ]
+            },
+            "Type": "KMS"
+          },
+          "Location": {
+            "Ref": "SampleRepoCodePipelineArtifactsBucket026A8665"
+          },
+          "Type": "S3"
+        }
+      },
+      "DependsOn": [
+        "SampleRepoCodePipelineRoleDefaultPolicy642AC930",
+        "SampleRepoCodePipelineRole6980DB1B"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/Resource"
+      }
+    },
+    "SampleRepoCodePipelineSourceCodeCommitCodePipelineActionRole96429E3E": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::024845724544:root"
+                    ]
+                  ]
+                }
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/Source/CodeCommit/CodePipelineActionRole/Resource"
+      }
+    },
+    "SampleRepoCodePipelineSourceCodeCommitCodePipelineActionRoleDefaultPolicyAF767BC7": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "SampleRepoCodePipelineArtifactsBucket026A8665",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "SampleRepoCodePipelineArtifactsBucket026A8665",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "SampleRepoCodePipelineArtifactsBucketEncryptionKey0EF69A44",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "codecommit:GetBranch",
+                "codecommit:GetCommit",
+                "codecommit:UploadArchive",
+                "codecommit:GetUploadArchiveStatus",
+                "codecommit:CancelUploadArchive"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "MyRepository4C4BD5FC",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "SampleRepoCodePipelineSourceCodeCommitCodePipelineActionRoleDefaultPolicyAF767BC7",
+        "Roles": [
+          {
+            "Ref": "SampleRepoCodePipelineSourceCodeCommitCodePipelineActionRole96429E3E"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/Source/CodeCommit/CodePipelineActionRole/DefaultPolicy/Resource"
+      }
+    },
+    "SampleRepoCodePipelineEventsRoleE1F60783": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/EventsRole/Resource"
+      }
+    },
+    "SampleRepoCodePipelineEventsRoleDefaultPolicy8DD0C08D": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "codepipeline:StartPipelineExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":codepipeline:us-west-2:024845724544:",
+                    {
+                      "Ref": "SampleRepoCodePipelineC5C6DDEA"
+                    }
+                  ]
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "SampleRepoCodePipelineEventsRoleDefaultPolicy8DD0C08D",
+        "Roles": [
+          {
+            "Ref": "SampleRepoCodePipelineEventsRoleE1F60783"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/EventsRole/DefaultPolicy/Resource"
+      }
+    },
+    "SampleRepoCodePipelineBuildCodeBuildCodePipelineActionRoleEDB8B57B": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::024845724544:root"
+                    ]
+                  ]
+                }
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/Build/CodeBuild/CodePipelineActionRole/Resource"
+      }
+    },
+    "SampleRepoCodePipelineBuildCodeBuildCodePipelineActionRoleDefaultPolicyF808AB62": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "SampleRepoCodebuild03200E2C",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "SampleRepoCodePipelineBuildCodeBuildCodePipelineActionRoleDefaultPolicyF808AB62",
+        "Roles": [
+          {
+            "Ref": "SampleRepoCodePipelineBuildCodeBuildCodePipelineActionRoleEDB8B57B"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/Sample-Repo-CodePipeline/Build/CodeBuild/CodePipelineActionRole/DefaultPolicy/Resource"
+      }
+    },
+    "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/02RwW7DIAyGn2V3SptOmnZcV01VNWlC6dQ7oZ7qJoEITKsI8e6DkK47+fNv84NNxav1K189vcmbW6hTuwzKWODhQFK1rAZnvFXAtkY7sl4R2/7ouxpZPhRQ9jzUpoOplqMwHaoxp4UiA7Xm4TiorB3FlgnfpMLBNxomywfVxhN8y6bYFf2hbZwzCiWh0X/NGT72IocvSTtJcJMjExavCR/Ge01gE98bykvmbENp3nMPmtgBlLdI484aP0xv+C9EpswJlOl7pDQ1DMYhGTuWvdyzNPA1ebnU4ee9pFjONh67Ew/CmguUfc5YygMO0KFOXyBmmlpmjqztk+snTBfmsOlQupxMEJl75uHdq7YMXSjGyHTy5he3vFYvvFqlH784xIX1mrAHXpf4C2AS1FcOAgAA"
+      },
+      "Metadata": {
+        "aws:cdk:path": "Sample-Repo-CFN/CDKMetadata/Default"
+      }
+    }
+  }
+}
