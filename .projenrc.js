@@ -1,13 +1,13 @@
 const { AwsCdkConstructLibrary, NodePackageManager } = require('projen');
 const project = new AwsCdkConstructLibrary({
-  author: 'ishita',
+  author: 'ishita.saxena',
   authorAddress: 'ishitasaxena78@yahoo.in',
-  cdkVersion: '1.127.0',
+  cdkVersion: '1.128.0',
   defaultReleaseBranch: 'main',
   name: 'v9',
   clobber: false,
-  repositoryUrl: 'https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdk-library-v7',
-  cdkDependencies: ['@aws-cdk/core', '@aws-cdk/aws-codecommit', '@aws-cdk/aws-codepipeline-actions', '@aws-cdk/aws-codepipeline', '@aws-cdk/aws-codebuild', '@aws-cdk/aws-iam', '@aws-cdk/aws-ec2'],
+  repositoryUrl: 'https://git-codecommit.us-east-2.amazonaws.com/v1/repos/Sample-Repo-Codecommit',
+  cdkDependencies: ['@aws-cdk/core', '@aws-cdk/aws-codecommit', '@aws-cdk/aws-codepipeline-actions', '@aws-cdk/aws-codepipeline', '@aws-cdk/aws-codebuild', '@aws-cdk/aws-iam', '@aws-cdk/aws-ec2', '@aws-cdk/aws-sns', '@aws-cdk/aws-events-targets', '@aws-cdk/aws-codeartifact', '@aws-cdk/aws-events'],
   packageManager: NodePackageManager.NPM,
   github: false,
   docgen: true,
